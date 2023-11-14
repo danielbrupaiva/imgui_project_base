@@ -25,8 +25,12 @@ install(TARGETS
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 ###############################################################################################
-add_subdirectory($ENV{DEPENDENCIES_FOLDER}/vendor/Catch2
-    $ENV{DEPENDENCIES_FOLDER}/vendor/Catch2/$ENV{BUILD_FOLDER}
-)
+include(FetchContent)
+FetchContent_Declare(Catch2                              # name of the content
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git  # the repository
+  GIT_TAG        devel                                   # the tag
+  )
+FetchContent_MakeAvailable(Catch2)
+FetchContent_GetProperties(Catch2)
 target_link_libraries(${PROJECT_NAME} Catch2 Catch2WithMain )
 

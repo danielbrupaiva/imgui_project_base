@@ -1,16 +1,21 @@
 ###############################################################################################
 set(ENV{DEPENDENCIES_FOLDER} ${CMAKE_CURRENT_SOURCE_DIR}/dependencies)
-set(ENV{TARGET_SYSROOT} "")
-set(ENV{TARGET_TRIPLET} "x86_64-unknown-linux-gnu")
-set(ENV{TARGET_TOOLCHAIN} "")
-set(ENV{BUILD_FOLDER} "build_x86_64-unknown-linux-gnu")
-###############################################################################################
-option(CROSS_COMPILER "CROSS COMPILER" ON)
-if(CROSS_COMPILER)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake)
-endif()
 
-option(TARGET_SYSROOT "TARGET_SYSROOT" ON)
+set(ENV{TARGET_TRIPLET} "x86_64-unknown-linux-gnu")
+#set(ENV{TARGET_TRIPLET} "aarch64-beagle-linux-gnu")
+#set(ENV{TARGET_TRIPLET} "aarch64-none-linux-gnu")
+
+set(ENV{BUILD_FOLDER} "build_$ENV{TARGET_TRIPLET}")
+set(ENV{TARGET_TOOLCHAIN} "")
+set(ENV{TARGET_SYSROOT} "")
+
+###############################################################################################
+option(CROSS_COMPILER "CROSS COMPILER" OFF)
+#if(CROSS_COMPILER)
+#    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchain.cmake)
+#endif()
+
+option(TARGET_SYSROOT "TARGET_SYSROOT" OFF)
 if(TARGET_SYSROOT)
     set(ENV{TARGET_SYSROOT} $ENV{DEPENDENCIES_FOLDER}/sysroot)
 endif()

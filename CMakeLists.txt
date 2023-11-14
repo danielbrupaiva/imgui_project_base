@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+
 set(PROJECT_NAME imgui_project_base)
 project(${PROJECT_NAME} LANGUAGES CXX)
 message("${BoldGreen}${PROJECT_NAME} BUILD ${ColourReset}")
@@ -26,8 +27,17 @@ add_executable(${PROJECT_NAME}
     ${SOURCES}
 )
 ###############################################################################################
-add_subdirectory($ENV{DEPENDENCIES_FOLDER}/vendor/imgui
-    $ENV{DEPENDENCIES_FOLDER}/vendor/imgui/$ENV{BUILD_FOLDER}
+include(FetchContent)
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/danielbrupaiva/imgui.git
+    GIT_TAG master
 )
+FetchContent_MakeAvailable(imgui)
+FetchContent_GetProperties(imgui)
+
+#add_subdirectory($ENV{DEPENDENCIES_FOLDER}/vendor/imgui
+#    $ENV{DEPENDENCIES_FOLDER}/vendor/imgui/$ENV{BUILD_FOLDER}
+#)
 target_link_libraries(${PROJECT_NAME} imgui)
 
