@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
-
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/options.cmake)
+###############################################################################################
 set(PROJECT_NAME imgui_project_base)
 project(${PROJECT_NAME} LANGUAGES CXX)
 message("${BoldGreen}${PROJECT_NAME} BUILD ${ColourReset}")
@@ -12,8 +13,7 @@ if(CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
    message(FATAL_ERROR "-- In-source builds are not allowed.")
 endif()
 ###############################################################################################
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/options.cmake)
-###############################################################################################
+
 include(GNUInstallDirs)
 install(TARGETS
     DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -41,5 +41,5 @@ FetchContent_GetProperties(imgui)
 #add_subdirectory($ENV{DEPENDENCIES_FOLDER}/vendor/imgui
 #    $ENV{DEPENDENCIES_FOLDER}/vendor/imgui/build
 #)
-target_link_libraries(${PROJECT_NAME} imgui)
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
 

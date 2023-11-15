@@ -32,3 +32,8 @@ GUI app example in C++ and Dear ImGui Framework
     
     $ sudo apt install libglfw3-dev
 
+## Build
+
+    $ mkdir build && cd build
+    $ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain.cmake ..
+    $ ninja
