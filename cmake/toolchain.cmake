@@ -1,3 +1,6 @@
+option(CROSS_COMPILER "Enable cross compiler?" ON)
+message("${BoldYellow}-- Cross compiler: ${CROSS_COMPILER}${ColourReset}")
+###############################################################################################
 ###############################################################################################
 set(ARCH_GCC aarch64-beagle-linux-gnu)
 # define target sysroot
@@ -35,7 +38,6 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_BUILD_RPATH $ENV{TARGET_SYSROOT})
 
-
 set(XCB_PATH_VARIABLE ${TARGET_SYSROOT})
 
 set(GL_INC_DIR ${TARGET_SYSROOT}/usr/include)
@@ -49,4 +51,4 @@ set(OPENGL_opengl_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnu/libOpen
 set(OPENGL_glx_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnu/libGLX.so)
 
 set(GLESv2_INCLUDE_DIR ${GL_INC_DIR})
-set(GLESv2_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnulibGLESv2.so)
+set(GLESv2_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnu/libGLESv2.so)

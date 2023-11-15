@@ -22,6 +22,4 @@ endif()
 set(ENV{DEPENDENCIES_FOLDER} /home/daniel/projects/imgui_project_base/dependencies)
 message("${BoldYellow}-- Dependencies folder: $ENV{DEPENDENCIES_FOLDER}${ColourReset}")
 ###############################################################################################
-option(CROSS_COMPILER "Enable cross compiler?" OFF)
-message("${BoldYellow}-- Cross compiler: ${CROSS_COMPILER}${ColourReset}")
-###############################################################################################
+

@@ -111,6 +111,7 @@ can also be built by filesystem building tools.
     $ mkdir sysroot sysroot/usr sysroot/opt
     
     $ cd sysroot   
+    $ rsync -avzS --rsync-path="rsync" --delete debian@10.0.0.10:/usr/local ./usr
     $ rsync -avzS --rsync-path="rsync" --delete debian@10.0.0.10:/usr/include ./usr
     $ rsync -avzS --rsync-path="rsync" --delete debian@10.0.0.10:/usr/lib ./usr 
     $ rsync -avzS --rsync-path="rsync" --delete debian@10.0.0.10:/lib .
