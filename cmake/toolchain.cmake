@@ -1,20 +1,21 @@
 ###############################################################################################
-# define processor architecture (triple)
-set(TARGET_ARCHITECTURE aarch64-linux-gnu )
 set(ARCH_GCC aarch64-beagle-linux-gnu)
 # define target sysroot
-set(TARGET_SYSROOT /dependencies/sysroot/beagleplay)
+set(TARGET_SYSROOT /home/daniel/projects/imgui_project_base/dependencies/sysroot/beagleplay)
 # define toolchain location
-set(TARGET_TOOLCHAIN /dependencies/toolchain/${ARCH_GCC})
+set(TARGET_TOOLCHAIN /home/daniel/projects/imgui_project_base/dependencies/toolchain/${ARCH_GCC})
 # define compiler C/CXX
 set(CMAKE_C_COMPILER ${TARGET_TOOLCHAIN}/bin/${ARCH_GCC}-gcc)
 set(CMAKE_CXX_COMPILER ${TARGET_TOOLCHAIN}/bin/${ARCH_GCC}-g++)
 # define C/CXX flags
-set(CMAKE_C_FLAGS  )
-set(CMAKE_CXX_FLAGS )
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${TARGET_SYSROOT}/usr/include")
+set(CMAKE_CXX_FLAGS ${CMAKE_C_FLAGS})
 # force cmake c/cxx compiler works
 set(CMAKE_C_COMPILER_WORKS ON)
 set(CMAKE_CXX_COMPILER_WORKS ON)
+###############################################################################################
+# define processor architecture (triple)
+set(TARGET_ARCHITECTURE aarch64-linux-gnu )
 # define PKG config
 set(ENV{PKG_CONFIG_PATH} $PKG_CONFIG_PATH:${TARGET_SYSROOT}/usr/lib/${TARGET_ARCHITECTURE}/pkgconfig)
 # define PKG LIBDIR config
@@ -34,3 +35,18 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_BUILD_RPATH $ENV{TARGET_SYSROOT})
 
+
+set(XCB_PATH_VARIABLE ${TARGET_SYSROOT})
+
+set(GL_INC_DIR ${TARGET_SYSROOT}/usr/include)
+set(GL_LIB_DIR ${TARGET_SYSROOT}:${TARGET_SYSROOT}/usr/lib/aarch64-linux-gnu/:${TARGET_SYSROOT}/usr:${TARGET_SYSROOT}/usr/lib)
+
+set(EGL_INCLUDE_DIR ${GL_INC_DIR})
+set(EGL_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnu/libEGL.so)
+
+set(OPENGL_INCLUDE_DIR ${GL_INC_DIR})
+set(OPENGL_opengl_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnu/libOpenGL.so)
+set(OPENGL_glx_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnu/libGLX.so)
+
+set(GLESv2_INCLUDE_DIR ${GL_INC_DIR})
+set(GLESv2_LIBRARY ${XCB_PATH_VARIABLE}/usr/lib/aarch64-linux-gnulibGLESv2.so)
