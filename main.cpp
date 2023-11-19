@@ -13,11 +13,24 @@ int main(int, char**)
     //Start backend
     Database db{"localhost","5432","imgui","1234","project"};
 
+    std::string sql_query = "CREATE TABLE IF NOT EXISTS tb_users ( \
+                            id SERIAL PRIMARY KEY, \
+                            username VARCHAR(50) UNIQUE NOT NULL, \
+                            security_level INT CHECK (security_level IN (0, 1, 2)) NOT NULL, \
+                            password VARCHAR(100) NOT NULL);\
+                            INSERT INTO tb_users (username, security_level, password) VALUES('admin', 0, 'admin');\
+                            INSERT INTO tb_users (username, security_level, password) VALUES('supervisor', 1, '1234');\
+                            INSERT INTO tb_users (username, security_level, password) VALUES('operator 1', 2, '1234');\
+                            INSERT INTO tb_users (username, security_level, password) VALUES('operator 2', 2, '1234');\
+                            INSERT INTO tb_users (username, security_level, password) VALUES('operator 3', 2, '1234');";
+
+    db.commit_query(sql_query);
+
     PRINT("Do-While ");
     do {//IMGUI code
-        app.Begin();{
-        }app.Render();
-    } while (!app.getIsAppDone());
+        app.begin();{
+        }app.render();
+    } while (!app.get_is_app_done());
 
     PRINT("APP stop");
     return EXIT_SUCCESS;

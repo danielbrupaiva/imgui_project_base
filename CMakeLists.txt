@@ -31,16 +31,6 @@ add_executable(${PROJECT_NAME}
     ${SOURCES}
 )
 ###############################################################################################
-#FetchContent_Declare(
-#    imgui
-#    GIT_REPOSITORY https://github.com/danielbrupaiva/imgui.git
-#    GIT_TAG master
-#    GIT_SHALLOW TRUE
-#    GIT_PROGRESS TRUE
-#)
-#FetchContent_MakeAvailable(imgui)
-#FetchContent_GetProperties(imgui)
-
 add_subdirectory($ENV{DEPENDENCIES_FOLDER}/vendor/imgui
     $ENV{DEPENDENCIES_FOLDER}/vendor/imgui/build$ENV{BUILD_FOLDER}
 )

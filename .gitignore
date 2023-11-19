@@ -4,5 +4,5 @@ build*/
 
 dependencies/sysroot/
 dependencies/toolchain/
-dependencies/vendor/libpqxx/build*
-dependencies/vendor/imgui/build*
+dependencies/vendor/libpqxx/build*/
+dependencies/vendor/imgui/build*/

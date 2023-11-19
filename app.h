@@ -49,8 +49,8 @@ public:
     //TODO: implement others backends
     enum class BACKEND{ SDL3 };
 private:
-    bool m_isAppDone;
-    bool isDragState;
+    bool m_is_app_done;
+    bool m_is_drag_state;
     const char* m_title;
     ImVec2 m_size;
     //Setup backend
@@ -62,7 +62,7 @@ private:
     //SDL_image
 public:
     ImVec2 m_logo_size;
-    SDL_Texture* m_SDL_logoTexture = nullptr;
+    SDL_Texture* m_SDL_logo_texture = nullptr;
     //ImGUI members variables
     ImVec4 m_clear_color = ImVec4(0.15f, 0.15f, 0.15f, 0.0f);
     //ImVec4 m_clear_color = ImVec4(1.0f, 1.0f, 1.0f, 0.0f);
@@ -74,23 +74,23 @@ public:
         { screen4_render, &isTransition[FSM::SCREEN4], 0U, {FSM::SCREEN3,FSM::SCREEN5} },
         { screen5_render, &isTransition[FSM::SCREEN5], 0U, {FSM::SCREEN4,FSM::SCREEN1} }
     };
-    FSM::systemState_t m_currentState = FSM::SCREEN1;
+    FSM::systemState_t m_current_state = FSM::SCREEN1;
 public:
     App(ImVec2 _size, const char* _title, BACKEND _backend);
     ~App();
 public://methods
-    bool SetupBackend(BACKEND _backend);
-    bool LoadTextureFromFile(const char *_filename, SDL_Texture **_texture_ptr, float &_width, float &_height, SDL_Renderer *_renderer);
-    void EventHandler();
-    void Begin();
-    void Render();
+    bool setup_backend(BACKEND _backend);
+    bool load_texture_from_file(const char *_filename, SDL_Texture **_texture_ptr, float &_width, float &_height, SDL_Renderer *_renderer);
+    void event_handler();
+    void begin();
+    void render();
 public:
-    void DrawGrid(float scale, const ImVec4& color, bool filled);
-    void MouseHandler(float threshold);
-    void SetAppStyle();
-    void DebugScreen(App* app);
+    void draw_grid(float scale, const ImVec4& color, bool filled);
+    void mouse_handler(float threshold);
+    void set_app_style();
+    void debug_screen(App* app);
 public: //inline methods
-    inline bool getIsAppDone() const { return (m_isAppDone );}
-    inline void setAppDone(bool appDone){m_isAppDone = appDone;}
+    inline bool get_is_app_done() const { return (m_is_app_done );}
+    inline void set_app_done(bool appDone){m_is_app_done = appDone;}
 };
 

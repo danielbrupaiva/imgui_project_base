@@ -5,9 +5,9 @@ App::App(ImVec2 _size, const char* _title, BACKEND _backend) :
     m_title(_title),
     m_backend(_backend)
 {
-    SetupBackend(m_backend);
-    LoadTextureFromFile("./resources/_logo.png",
-                        &m_SDL_logoTexture, m_logo_size.x, m_logo_size.y, m_SDL_renderer);
+    setup_backend(m_backend);
+    load_texture_from_file("./resources/_logo.png",
+                           &m_SDL_logo_texture, m_logo_size.x, m_logo_size.y, m_SDL_renderer);
 }
 
 App::~App()
@@ -18,13 +18,13 @@ App::~App()
     ImGui::DestroyContext();
     //SDL cleanup
     IMG_Quit();
-    SDL_DestroyTexture(m_SDL_logoTexture);
+    SDL_DestroyTexture(m_SDL_logo_texture);
     SDL_DestroyRenderer(m_SDL_renderer);
     SDL_DestroyWindow(m_SDL_window);
     SDL_Quit();
 }
 
-bool App::SetupBackend(BACKEND _backend)
+bool App::setup_backend(BACKEND _backend)
 {
 
     // Setup SDL
@@ -74,32 +74,32 @@ bool App::SetupBackend(BACKEND _backend)
 
     return EXIT_SUCCESS;
 }
-void App::EventHandler()
+void App::event_handler()
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
         ImGui_ImplSDL3_ProcessEvent(&event);
         if (event.type == SDL_EVENT_QUIT)
-            m_isAppDone = true;
+            m_is_app_done = true;
         if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED && event.window.windowID == SDL_GetWindowID(m_SDL_window))
-            m_isAppDone = true;
+            m_is_app_done = true;
     }
-    MouseHandler(100.0);
+    mouse_handler(100.0);
 }
-void App::Begin()
+void App::begin()
 {
-    EventHandler();
+    event_handler();
     // Start the Dear ImGui frame
     ImGui_ImplSDLRenderer3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
-    SetAppStyle();
+    set_app_style();
 
 }
-void App::Render()
+void App::render()
 {
-    m_fsm[m_currentState].pfHandler(this);   
+    m_fsm[m_current_state].pfHandler(this);   
     // Rendering
     ImGui::Render();
     ImGuiIO& m_io = ImGui::GetIO(); (void)m_io;
@@ -114,7 +114,7 @@ void App::Render()
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData());
     SDL_RenderPresent(m_SDL_renderer);
 }
-bool App::LoadTextureFromFile(const char *_filename, SDL_Texture **_texture_ptr, float &_width, float &_height, SDL_Renderer *_renderer)
+bool App::load_texture_from_file(const char *_filename, SDL_Texture **_texture_ptr, float &_width, float &_height, SDL_Renderer *_renderer)
 {
     int _flags = IMG_INIT_PNG | IMG_INIT_JPG ;
     int _initStatus = IMG_Init(_flags);
@@ -151,8 +151,8 @@ void screen1_render(App* app)
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(app->m_clear_color));
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(app->m_clear_color));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(app->m_clear_color));
-        if(ImGui::ImageButton((void*)app->m_SDL_logoTexture, ImgSize)){
-            app->m_currentState = FSM::SCREEN2;
+        if(ImGui::ImageButton((void*)app->m_SDL_logo_texture, ImgSize)){
+            app->m_current_state = FSM::SCREEN2;
         }
         ImGui::PopStyleColor(3);
     }ImGui::End();
@@ -213,7 +213,7 @@ void screen5_render(App* app)
 
     }ImGui::End();
 }
-void App::DrawGrid(float scale, const ImVec4& color, bool filled)
+void App::draw_grid(float scale, const ImVec4& color, bool filled)
 {
     const ImU32 color_int = ImColor(color);
 
@@ -236,35 +236,35 @@ void App::DrawGrid(float scale, const ImVec4& color, bool filled)
         }
     }
 }
-void App::MouseHandler(float threshold){
-
-    uint8_t index = m_currentState;
+void App::mouse_handler(float threshold){
+    
+    uint8_t index = m_current_state;
     ImGuiIO& io = ImGui::GetIO();
     if ( ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
         PRINT("Clicked");
-        isDragState=true;
+        m_is_drag_state=true;
     }
-    if( isDragState && io.MouseDelta.x > 0 && ImGui::IsMouseDragging(ImGuiMouseButton_Left, threshold)){
+    if( m_is_drag_state && io.MouseDelta.x > 0 && ImGui::IsMouseDragging(ImGuiMouseButton_Left, threshold)){
         PRINT("Swipe Left");
         index == 0 ? index = 4 : index--;
-        m_currentState = static_cast<FSM::systemState_t>(index);
-        PRINT("Screen: " + std::to_string( m_currentState + 1 ));
-        isDragState=false;
+        m_current_state = static_cast<FSM::systemState_t>(index);
+        PRINT("Screen: " + std::to_string( m_current_state + 1 ));
+        m_is_drag_state=false;
     }
-    if( isDragState && io.MouseDelta.x < 0 && ImGui::IsMouseDragging(ImGuiMouseButton_Left, threshold)){
+    if( m_is_drag_state && io.MouseDelta.x < 0 && ImGui::IsMouseDragging(ImGuiMouseButton_Left, threshold)){
         PRINT("Swipe Right");
         index == 4 ? index = 0 : index++;
-        m_currentState = static_cast<FSM::systemState_t>(index);
-        PRINT("Screen: " + std::to_string( m_currentState + 1 ));
-        isDragState=false;
+        m_current_state = static_cast<FSM::systemState_t>(index);
+        PRINT("Screen: " + std::to_string( m_current_state + 1 ));
+        m_is_drag_state=false;
     }
     if ( ImGui::IsMouseReleased(ImGuiMouseButton_Left)){
         PRINT("Released");
-        isDragState=true;
+        m_is_drag_state=true;
     }
 }
 
-void App::SetAppStyle()
+void App::set_app_style()
 {
     ImGuiStyle& style = ImGui::GetStyle();
     //ImGui::SeparatorText("Rounding");
@@ -275,7 +275,7 @@ void App::SetAppStyle()
 }
 
 
-void App::DebugScreen(App* app){
+void App::debug_screen(App* app){
 
     const char* name = "Debug";
     //ImVec2 position = ImVec2(0,0);
@@ -299,27 +299,27 @@ void App::DebugScreen(App* app){
         //Screen selector
         ImGui::SeparatorText("Screen selector");
         if (ImGui::Button("Screen1")){
-            app->m_currentState = FSM::SCREEN1;
+            app->m_current_state = FSM::SCREEN1;
             PRINT("FSM::SCREEN1");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen2")){
-            app->m_currentState = FSM::SCREEN2;
+            app->m_current_state = FSM::SCREEN2;
             PRINT("FSM::SCREEN2");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen3")){
-            app->m_currentState = FSM::SCREEN3;
+            app->m_current_state = FSM::SCREEN3;
             PRINT("FSM::SCREEN3");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen4")){
-            app->m_currentState = FSM::SCREEN4;
+            app->m_current_state = FSM::SCREEN4;
             PRINT("FSM::SCREEN4");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen5")){
-            app->m_currentState = FSM::SCREEN5;
+            app->m_current_state = FSM::SCREEN5;
             PRINT("FSM::SCREEN5");
         }
         // Mouse info
@@ -342,18 +342,18 @@ void App::DebugScreen(App* app){
         struct funcs { static bool IsLegacyNativeDupe(ImGuiKey key) { return key < 512 && ImGui::GetIO().KeyMap[key] != -1; } }; // Hide Native<>ImGuiKey duplicates when both exists in the array
         ImGuiKey start_key = (ImGuiKey)0;
         ImGui::Text("Keys down:");         for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) { if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key)) continue; ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key); }
-
-        if( isDragState && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 50.0f) && io.MouseDelta.x < 0 ){
+        
+        if( m_is_drag_state && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 50.0f) && io.MouseDelta.x < 0 ){
             PRINT("Swipe Left");
-            isDragState = false;
-        }else if(isDragState && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 50.0f) && io.MouseDelta.x > 0 ){
+            m_is_drag_state = false;
+        }else if(m_is_drag_state && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 50.0f) && io.MouseDelta.x > 0 ){
             PRINT("Swipe Right");
-            isDragState = false;
+            m_is_drag_state = false;
         }
-        isDragState = ImGui::IsMouseReleased(ImGuiMouseButton_Left);
+        m_is_drag_state = ImGui::IsMouseReleased(ImGuiMouseButton_Left);
 
         if (ImGui::Button("EXIT!!!"))
-            app->setAppDone(true);
+            app->set_app_done(true);
 
     }ImGui::End();
 }
