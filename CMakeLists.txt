@@ -36,7 +36,7 @@ add_subdirectory($ENV{DEPENDENCIES_FOLDER}/vendor/imgui
 )
 target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
 ###############################################################################################
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources/_logo.png
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources/logo.png
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resources
     )
 ###############################################################################################

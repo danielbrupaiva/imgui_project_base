@@ -5,6 +5,7 @@
 [submodule "dependencies/vendor/imgui"]
 	path = dependencies/vendor/imgui
 	url = https://github.com/danielbrupaiva/imgui.git
+	branch = master
 [submodule "dependencies/vendor/SDL3"]
 	path = dependencies/vendor/SDL3
 	url = https://github.com/danielbrupaiva/SDL3.git
