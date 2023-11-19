@@ -1,0 +1,13 @@
+[submodule "dependencies/vendor/libpqxx"]
+	path = dependencies/vendor/libpqxx
+	url = https://github.com/jtv/libpqxx.git
+	branch = 7.8.1
+[submodule "dependencies/vendor/imgui"]
+	path = dependencies/vendor/imgui
+	url = https://github.com/danielbrupaiva/imgui.git
+[submodule "dependencies/vendor/SDL3"]
+	path = dependencies/vendor/SDL3
+	url = https://github.com/danielbrupaiva/SDL3.git
+[submodule "dependencies/vendor/SDL3_image"]
+	path = dependencies/vendor/SDL3_image
+	url = https://github.com/danielbrupaiva/SDL3_image.git

@@ -35,5 +35,5 @@ GUI app example in C++ and Dear ImGui Framework
 ## Build
 
     $ mkdir build && cd build
-    $ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain.cmake ..
+    $ cmake -GNinja -DCROSS_COMPILER=ON -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain.cmake ..
     $ ninja

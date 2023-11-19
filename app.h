@@ -2,11 +2,11 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
-#define PRINT(x) std::cout << x << std::endl;
 #include <memory>
 #include <vector>
 #include <numeric>
 
+#include "filelogger.h"
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"

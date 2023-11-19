@@ -39,7 +39,7 @@
     $ sudo make install
 
 ~
-    $ adduser postgres
+    $ sudo adduser postgres imgui
     $ passwd postgres [1234]
     $ mkdir -p /usr/local/pgsql/data
     $ chown postgres /usr/local/pgsql/data
@@ -66,10 +66,37 @@ Giving the user a password
     $ sudo -u postgres psql
     $ psql=# alter user <username> with encrypted password '<password>';
              alter user imgui with encrypted password '1234';
+    $ postgres=# alter user imgui with password '1234';
+    
+Create a database
 
+    $ createdb -h localhost -p 5432 -U <username> <new_database>
+    
+    $ CREATE DATABASE project;
+    
+Change Database Owner:
+    $ ALTER DATABASE project OWNER TO imgui;
+    
 Granting privileges on database
 
     $ psql=# grant all privileges on database <dbname> to <username> ; 
+    
+List all Databases:
+    $ \l
+    
+CREATE ROLE imgui LOGIN PASSWORD 'your_password';
+ALTER ROLE imgui CREATEDB
+GRANT ALL PRIVILEGES ON DATABASE project to imgui;
+
+Create users tables
+
+CREATE TABLE public.tb_users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    security_level INT CHECK (security_level IN (0, 1, 2)) NOT NULL,
+    password VARCHAR(100) NOT NULL
+);
+
 
 ## PgAdmin
 

@@ -6,7 +6,7 @@ App::App(ImVec2 _size, const char* _title, BACKEND _backend) :
     m_backend(_backend)
 {
     SetupBackend(m_backend);
-    LoadTextureFromFile("../../resources/_logo.png",
+    LoadTextureFromFile("./resources/_logo.png",
                         &m_SDL_logoTexture, m_logo_size.x, m_logo_size.y, m_SDL_renderer);
 }
 
