@@ -23,9 +23,10 @@ install(TARGETS
 ###############################################################################################
 set(SOURCES
     main.cpp
-    app.h app.cpp
-    filelogger.h
-    database.h
+    global.hpp
+    app.hpp app.cpp
+    filelogger.hpp
+    database.hpp
 )
 add_executable(${PROJECT_NAME}
     ${SOURCES}
@@ -40,10 +41,10 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources/logo.png
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resources
     )
 ###############################################################################################
-option(SKIP_BUILD_TEST ON)
-option(BUILD_SHARED_LIBS OFF)
-option(BUILD_DOC OFF)
-option(INSTALL_TEST OFF)
+#option(SKIP_BUILD_TEST ON)
+#option(BUILD_SHARED_LIBS OFF)
+#option(BUILD_DOC OFF)
+#option(INSTALL_TEST OFF)
 add_subdirectory($ENV{DEPENDENCIES_FOLDER}/vendor/libpqxx
     $ENV{DEPENDENCIES_FOLDER}/vendor/libpqxx/build$ENV{BUILD_FOLDER}
 )

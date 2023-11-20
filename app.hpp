@@ -6,8 +6,10 @@
 #include <vector>
 #include <numeric>
 
-#include "filelogger.h"
+#include "global.hpp"
+#include "filelogger.hpp"
 #include "imgui.h"
+#include "imgui_stdlib.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_sdlrenderer3.h"
 #include <stdio.h>
@@ -17,7 +19,6 @@
 #else
 #include <SDL3/SDL_opengl.h>
 #endif
-
 #include "SDL3_image/SDL_image.h"
 
 #define NUM_OF_STATES 5
@@ -51,7 +52,7 @@ public:
 private:
     bool m_is_app_done;
     bool m_is_drag_state;
-    const char* m_title;
+    const std::string m_title;
     ImVec2 m_size;
     //Setup backend
     BACKEND m_backend;
@@ -76,7 +77,7 @@ public:
     };
     FSM::systemState_t m_current_state = FSM::SCREEN1;
 public:
-    App(ImVec2 _size, const char* _title, BACKEND _backend);
+    App(ImVec2 _size, const std::string _title, BACKEND _backend);
     ~App();
 public://methods
     bool setup_backend(BACKEND _backend);
