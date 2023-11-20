@@ -23,9 +23,10 @@ install(TARGETS
 ###############################################################################################
 set(SOURCES
     main.cpp
-    app.h app.cpp
-    filelogger.h
-    database.h
+    global.hpp
+    app.hpp app.cpp
+    filelogger.hpp
+    database.hpp
 )
 add_executable(${PROJECT_NAME}
     ${SOURCES}

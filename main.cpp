@@ -1,15 +1,17 @@
-#include "app.h"
-#include "database.h"
-#include "filelogger.h"
-#include "database.h"
+#include "global.hpp"
+#include "app.hpp"
+#include "database.hpp"
+#include "filelogger.hpp"
+#include "database.hpp"
 
 std::string TAG = "MAIN";
 
 int main(int, char**)
 {
     PRINT("HELLO " + TAG);
-    PRINT("APP start");
-    App app(ImVec2(1280,720),"ImGUI APP", App::BACKEND::SDL3);
+    PRINT("APP start");    
+
+    App app{ImVec2(1280,720),"ImGUI APP", App::BACKEND::SDL3};
     //Start backend
     Database db{"localhost","5432","imgui","1234","project"};
 
@@ -22,7 +24,4 @@ int main(int, char**)
     PRINT("APP stop");
     return EXIT_SUCCESS;
 }
-
-
-
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <pqxx/pqxx>
-#include "filelogger.h"
+#include "filelogger.hpp"
 
 class Database
 {
@@ -18,7 +18,7 @@ class Database
              IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'tb_users') THEN \
                  DROP TABLE public.tb_users; \
              END IF;\
-     CREATE TABLE IF NOT EXISTS public.tb_users ( id SERIAL PRIMARY KEY, username VARCHAR(50) \
+     CREATE TABLE IF NOT EXISTS public.tb_users ( user_id SERIAL PRIMARY KEY, username VARCHAR(50) \
                     UNIQUE NOT NULL, security_level INT \
                         CHECK (security_level IN (0, 1, 2)) NOT NULL, password VARCHAR(100) NOT NULL);\
      INSERT INTO public.tb_users (username, security_level, password) VALUES('admin', 0, 'admin');\

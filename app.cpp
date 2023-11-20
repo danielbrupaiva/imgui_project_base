@@ -1,13 +1,13 @@
-#include "app.h"
+#include "app.hpp"
 
-App::App(ImVec2 _size, const char* _title, BACKEND _backend) :
+App::App(ImVec2 _size, std::string _title, BACKEND _backend) :
     m_size(_size),
     m_title(_title),
     m_backend(_backend)
 {
     setup_backend(m_backend);
     load_texture_from_file("./resources/_logo.png",
-                           &m_SDL_logo_texture, m_logo_size.x, m_logo_size.y, m_SDL_renderer);
+                           &m_SDL_logo_texture, m_logo_size.x, m_logo_size.y, m_SDL_renderer);    
 }
 
 App::~App()
@@ -41,7 +41,7 @@ bool App::setup_backend(BACKEND _backend)
                                             //| SDL_WINDOW_FULLSCREEN_DESKTOP
                                             | SDL_WINDOW_BORDERLESS
                                             );
-    m_SDL_window = SDL_CreateWindow(m_title, m_size.x, m_size.y, m_SDL_window_flags);
+    m_SDL_window = SDL_CreateWindow(m_title.c_str(), m_size.x, m_size.y, m_SDL_window_flags);
     if (m_SDL_window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -140,7 +140,7 @@ void screen1_render(App* app)
     const char* name = "SCREEN 1";
     ImVec2 position = ImVec2(0,0);
     ImVec2 size = ImVec2(1280, 720);
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;;
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
@@ -159,57 +159,66 @@ void screen1_render(App* app)
 }
 void screen2_render(App* app)
 {
-    const char* name = "LOGIN";
+    const std::string name = "LOGIN";
     ImVec2 position = ImVec2(0,0);
     ImVec2 size = ImVec2(1280, 720);
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+
+
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
-    bool login = false;
-    if(login){
-    }else{
-        if(ImGui::Begin(name,NULL, flags)){
+    static User _inputUser;
 
-        }ImGui::End();
-    }
+    if(ImGui::Begin(name.c_str(), NULL, flags)){
+        ImGui::SeparatorText("Login");
+        ImGui::Text("Username:");
+        ImGui::InputTextWithHint("##username","Username", &_inputUser.name, ImGuiInputTextFlags_CharsUppercase);
+        ImGui::Text("Password:");
+        ImGui::InputTextWithHint("##password:","Password", &_inputUser.password, ImGuiInputTextFlags_Password);
+
+        if(ImGui::Button("Login")){
+
+        }
+
+    }ImGui::End();
+
+
 }
 void screen3_render(App* app)
 {
-    const char* name = "HOME";
+    const std::string name = "HOME";
     ImVec2 position = ImVec2(0,0);
     ImVec2 size = ImVec2(1280, 720);
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
-
-    if(ImGui::Begin(name, NULL, flags)){
-
+    if(ImGui::Begin(name.c_str(), NULL, flags)){        
     }ImGui::End();
 }
 void screen4_render(App* app)
 {
-    const char* name = "RECIPIES";
+    const std::string name = "RECIPIES";
     ImVec2 position = ImVec2(0,0);
     ImVec2 size = ImVec2(1280, 720);
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
-    if(ImGui::Begin(name, NULL, flags)){
+    if(ImGui::Begin(name.c_str(), NULL, flags)){
 
     }ImGui::End();
 }
 void screen5_render(App* app)
 {
-    const char* name = "SETUP";
+    const std::string name = "SETUP";
     ImVec2 position = ImVec2(0,0);
     ImVec2 size = ImVec2(1280, 720);
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
-    if(ImGui::Begin(name, NULL, flags)){
+    if(ImGui::Begin(name.c_str(), NULL, flags)){
 
     }ImGui::End();
 }
