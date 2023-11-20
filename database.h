@@ -10,6 +10,24 @@ class Database
     std::string m_password;
     std::string m_dbname;
     std::string m_connection_string;
+
+    std::string initial_setup_query =
+    "CREATE EXTENSION IF NOT EXISTS pgcrypto;\
+     DO $$ \
+         BEGIN \
+             IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'tb_users') THEN \
+                 DROP TABLE public.tb_users; \
+             END IF;\
+     CREATE TABLE IF NOT EXISTS public.tb_users ( id SERIAL PRIMARY KEY, username VARCHAR(50) \
+                    UNIQUE NOT NULL, security_level INT \
+                        CHECK (security_level IN (0, 1, 2)) NOT NULL, password VARCHAR(100) NOT NULL);\
+     INSERT INTO public.tb_users (username, security_level, password) VALUES('admin', 0, 'admin');\
+     INSERT INTO public.tb_users (username, security_level, password) VALUES('supervisor', 1, '1234');\
+     INSERT INTO public.tb_users (username, security_level, password) VALUES('operator_1', 2, '1234');\
+     INSERT INTO public.tb_users (username, security_level, password) VALUES('operator_2', 2, '1234');\
+     INSERT INTO public.tb_users (username, security_level, password) VALUES('operator_3', 2, '1234');\
+     END $$;";
+
 public:
     Database(const std::string _host,
              const std::string _port,
@@ -22,6 +40,7 @@ public:
         m_connection_string = "host="+_host+" port="+_port+" user="+_username+" password="+_password+" dbname="+_dbname;
 
         //Check if tables exists if not create
+        commit_query(initial_setup_query);
     }
     ~Database()
     {/** The destructor of pqxx::connection will close connection automatically.**/
@@ -50,29 +69,33 @@ public:
            return EXIT_FAILURE;
         }
     }
-    bool commit_query(std::string_view _sql_query)
+    pqxx::result commit_query(std::string_view _sql_query)
     {
         PRINT("SQL query");
-        auto conn = connect();
+        pqxx::connection conn = connect();
         pqxx::result result;
-
         if(conn.is_open())
         {
            PRINT("Database connected");
            pqxx::work work(conn);
            result = work.exec(_sql_query);
            // check result and treat
+           // Using ranged-based for loop and modern iterators to print the result
+           for (const auto& row : result) {
+               for (const auto& field : row) {
+                   std::cout << field.c_str() << " ";
+               }
+               std::cout << std::endl;
+           }
            work.commit();
-
            PRINT("Work commited");
         }
         disconnect(conn);
-        return EXIT_SUCCESS;
+        return result;
     }
-
-    bool setup_database()
-    {
-
-    }
-
 };
+/*        // Process the result
+        for (const auto& row : result) {
+            std::cout << "ID: " << row["id"].as<int>() << ", Name: " << row["name"].as<std::string>() << std::endl;
+            // Access other columns similarly using their names
+        }*/
