@@ -1,35 +1,36 @@
 cmake_minimum_required(VERSION 3.5)
-include(FetchContent)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/options.cmake)
 ###############################################################################################
-set(PROJECT_NAME imgui_project_base)
+set(PROJECT_NAME Core)
 project(${PROJECT_NAME} LANGUAGES CXX)
 message("${BoldGreen}${PROJECT_NAME} BUILD ${ColourReset}")
 ###############################################################################################
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ###############################################################################################
-
 if(CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
    message(FATAL_ERROR "-- In-source builds are not allowed.")
 endif()
 ###############################################################################################
-
 include(GNUInstallDirs)
 install(TARGETS
     DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 ###############################################################################################
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/App
-    #${CMAKE_CURRENT_SOURCE_DIR}/App/build$ENV{BUILD_FOLDER}
+set(SOURCES
+    filelogger.hpp
+    database.hpp
+)
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
 )
 ###############################################################################################
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Core
-    #${CMAKE_CURRENT_SOURCE_DIR}/Core/build$ENV{BUILD_FOLDER}
+option(SKIP_BUILD_TEST ON)
+option(BUILD_SHARED_LIBS OFF)
+option(BUILD_DOC OFF)
+option(INSTALL_TEST OFF)
+add_subdirectory(/home/daniel/projects/imgui_project_base/dependencies/vendor/libpqxx
+    /home/daniel/projects/imgui_project_base/dependencies/vendor/libpqxx/build$ENV{BUILD_FOLDER}
 )
-###############################################################################################
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources/logo.png
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/resources
-    )
+target_link_libraries(${PROJECT_NAME} PRIVATE pqxx)
 ###############################################################################################
