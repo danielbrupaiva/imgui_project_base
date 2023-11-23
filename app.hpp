@@ -25,11 +25,11 @@
 
 class App;
 
-void screen1_render(App *app);
-void screen2_render(App *app);
-void screen3_render(App *app);
-void screen4_render(App *app);
-void screen5_render(App *app);
+void screen1_render(App* app);
+void screen2_render(App* app);
+void screen3_render(App* app);
+void screen4_render(App* app);
+void screen5_render(App* app);
 
 //FSM - Circular screen sequence
 static bool isTransition[NUM_OF_STATES];

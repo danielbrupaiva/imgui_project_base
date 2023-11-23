@@ -162,7 +162,7 @@ void screen2_render(App* app)
     const std::string name = "LOGIN";
     ImVec2 position = ImVec2(0,0);
     ImVec2 size = ImVec2(1280, 720);
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
 
 
     ImGui::SetNextWindowPos(position);
@@ -171,13 +171,44 @@ void screen2_render(App* app)
     static User _inputUser;
 
     if(ImGui::Begin(name.c_str(), NULL, flags)){
-        ImGui::SeparatorText("Login");
-        ImGui::Text("Username:");
-        ImGui::InputTextWithHint("##username","Username", &_inputUser.name, ImGuiInputTextFlags_CharsUppercase);
-        ImGui::Text("Password:");
-        ImGui::InputTextWithHint("##password:","Password", &_inputUser.password, ImGuiInputTextFlags_Password);
 
-        if(ImGui::Button("Login")){
+        ImGui::Text("Username:");
+        ImGui::InputTextWithHint("##username","Username", &_inputUser.name, ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank);
+
+        ImGui::Text("Password:");
+        static bool _isViewPass = false;
+        ImGui::InputTextWithHint("##password:","Password", &_inputUser.password, _isViewPass ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_Password);
+        ImGui::SameLine();
+        if(ImGui::Button(_isViewPass ? "Hide" : "View")){
+            _isViewPass = !_isViewPass;
+        }
+        static bool _isLogged = false;
+        if(ImGui::Button(_isLogged ? "Logout":"Login")){
+            _isLogged = ! _isLogged;
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Logout")){
+
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Users")){
+
+        }
+        //CRUD - Create, Read, Update, Delete.
+        ImGui::SeparatorText("CRUD");
+        if(ImGui::Button("Create")){
+
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Read")){
+
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Update")){
+
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Delete")){
 
         }
 
