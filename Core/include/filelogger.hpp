@@ -9,6 +9,8 @@
 
 #define PRINT(x) std::cout << x << std::endl;
 
+namespace Core {
+
 class FileLogger
 {
 public:
@@ -88,3 +90,5 @@ public:
         }
     };
 };
+
+}

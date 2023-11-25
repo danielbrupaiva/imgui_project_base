@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+include(FetchContent)
 ###############################################################################################
 set(PROJECT_NAME Core)
 project(${PROJECT_NAME} LANGUAGES CXX)
@@ -18,19 +19,27 @@ install(TARGETS
 )
 ###############################################################################################
 set(SOURCES
-    filelogger.hpp
-    database.hpp
-)
-add_executable(${PROJECT_NAME}
-    ${SOURCES}
+    include/filelogger.hpp
+    include/database.hpp
 )
 ###############################################################################################
-option(SKIP_BUILD_TEST ON)
-option(BUILD_SHARED_LIBS OFF)
-option(BUILD_DOC OFF)
-option(INSTALL_TEST OFF)
-add_subdirectory(/home/daniel/projects/imgui_project_base/dependencies/vendor/libpqxx
-    /home/daniel/projects/imgui_project_base/dependencies/vendor/libpqxx/build$ENV{BUILD_FOLDER}
+add_library(${PROJECT_NAME} STATIC )
+target_sources(${PROJECT_NAME} PRIVATE ${SOURCES} )
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE pqxx)
+###############################################################################################
+if(${CROSS_COMPILER})
+    find_package(pqxx REQUIRED)
+else(NOT ${CROSS_COMPILER})
+    FetchContent_Declare(
+        pqxx
+        GIT_REPOSITORY https://github.com/danielbrupaiva/libpqxx.git
+        GIT_TAG fbc92684b96c7ae63ebe3ab3bed1bf035af263b6
+    )
+    FetchContent_MakeAvailable(pqxx)
+    FetchContent_GetProperties(pqxx)
+endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC pqxx)
 ###############################################################################################

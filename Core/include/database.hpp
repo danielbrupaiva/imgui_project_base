@@ -2,6 +2,8 @@
 #include <pqxx/pqxx>
 #include "filelogger.hpp"
 
+namespace Core {
+
 class Database
 {
     std::string m_host;
@@ -107,3 +109,5 @@ public:
         }
     }
 };
+
+}

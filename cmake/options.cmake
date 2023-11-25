@@ -22,6 +22,12 @@ endif()
 set(ENV{DEPENDENCIES_FOLDER} /home/daniel/projects/imgui_project_base/dependencies)
 message("${BoldYellow}-- Dependencies folder: $ENV{DEPENDENCIES_FOLDER}${ColourReset}")
 ###############################################################################################
+set(ENV{APP_FOLDER} /home/daniel/projects/imgui_project_base/App)
+message("${BoldYellow}-- App folder: $ENV{APP_FOLDER}${ColourReset}")
+###############################################################################################
+set(ENV{CORE_FOLDER} /home/daniel/projects/imgui_project_base/Core)
+message("${BoldYellow}-- Core folder: $ENV{CORE_FOLDER}${ColourReset}")
+###############################################################################################
 option(CROSS_COMPILER OFF)
 if(CROSS_COMPILER)
     set(ENV{BUILD_FOLDER} "_target")

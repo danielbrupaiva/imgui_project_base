@@ -13,7 +13,7 @@ set(TARGET_TOOLCHAIN /home/daniel/projects/imgui_project_base/dependencies/toolc
 set(CMAKE_C_COMPILER ${TARGET_TOOLCHAIN}/bin/${ARCH_GCC}-gcc)
 set(CMAKE_CXX_COMPILER ${TARGET_TOOLCHAIN}/bin/${ARCH_GCC}-g++)
 # define C/CXX flags
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${TARGET_SYSROOT}/usr/include -I${TARGET_SYSROOT}/usr/include/${TARGET_ARCHITECTURE} -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${TARGET_SYSROOT}/usr/include -I${TARGET_SYSROOT}/usr/include/${TARGET_ARCHITECTURE}")
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 set(CMAKE_CXX_FLAGS ${CMAKE_C_FLAGS})
 # force cmake c/cxx compiler works
