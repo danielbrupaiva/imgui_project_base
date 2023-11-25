@@ -1,15 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/options.cmake)
+include(FetchContent)
 ###############################################################################################
-set(PROJECT_NAME imgui_project_base)
+set(PROJECT_NAME App)
 project(${PROJECT_NAME} LANGUAGES CXX)
 message("${BoldGreen}${PROJECT_NAME} BUILD ${ColourReset}")
 ###############################################################################################
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-###############################################################################################
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_CXX_FLAGS ${CMAKE_C_FLAGS})
 ###############################################################################################
 if(CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
    message(FATAL_ERROR "-- In-source builds are not allowed.")
@@ -21,9 +18,36 @@ install(TARGETS
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 ###############################################################################################
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/App )
+set(SOURCES
+    main.cpp
+    include/global.hpp
+    include/app.hpp app.cpp
+)
 ###############################################################################################
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources/logo.png
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/App/resources
-    )
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+###############################################################################################
+FetchContent_Declare(
+    Core
+    SOURCE_DIR $ENV{CORE_FOLDER}
+)
+FetchContent_MakeAvailable(Core)
+FetchContent_GetProperties(Core)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC Core)
+###############################################################################################
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/danielbrupaiva/imgui.git
+    GIT_TAG 5f89c1934c4b8a7894029b5d83a6be9cd3ef2f34
+)
+FetchContent_MakeAvailable(imgui)
+FetchContent_GetProperties(imgui)
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui)
 ###############################################################################################
