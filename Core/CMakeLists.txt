@@ -19,8 +19,8 @@ install(TARGETS
 )
 ###############################################################################################
 set(SOURCES
-    include/filelogger.hpp
-    include/database.hpp
+    filelogger.hpp
+    database.hpp
 )
 ###############################################################################################
 add_library(${PROJECT_NAME} STATIC )
