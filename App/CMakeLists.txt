@@ -24,6 +24,7 @@ set(SOURCES
     globals.hpp
     FSM.hpp
     app.hpp app.cpp
+    ui_screen.h ui_screen.cpp
 )
 ###############################################################################################
 add_executable(${PROJECT_NAME}

@@ -23,9 +23,7 @@ App::~App()
     SDL_Quit();
 }
 bool App::setup_backend(BACKEND _backend)
-{
-
-    // Setup SDL
+{// Setup SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         printf("Error: %s\n", SDL_GetError());
@@ -49,19 +47,15 @@ bool App::setup_backend(BACKEND _backend)
     }
     SDL_SetWindowPosition(m_SDL_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     SDL_ShowWindow(m_SDL_window);
-
-
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& m_io = ImGui::GetIO(); (void)m_io;
     m_io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     m_io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsLight();
-
     // Setup Platform/Renderer backends
     ImGui_ImplSDL3_InitForSDLRenderer(m_SDL_window, m_SDL_renderer);
     ImGui_ImplSDLRenderer3_Init(m_SDL_renderer);
