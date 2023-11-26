@@ -20,8 +20,10 @@ install(TARGETS
 ###############################################################################################
 set(SOURCES
     main.cpp
-    include/global.hpp
-    include/app.hpp app.cpp
+    user.hpp
+    globals.hpp
+    FSM.hpp
+    app.hpp app.cpp
 )
 ###############################################################################################
 add_executable(${PROJECT_NAME}

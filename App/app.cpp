@@ -1,6 +1,6 @@
 #include "app.hpp"
 
-App::App(ImVec2 _size, std::string _title, BACKEND _backend) :
+App::App(ImVec2 _size, std::string _title, App::BACKEND _backend) :
     m_size(_size),
     m_title(_title),
     m_backend(_backend)
@@ -9,7 +9,6 @@ App::App(ImVec2 _size, std::string _title, BACKEND _backend) :
     load_texture_from_file("./resources/logo.png",
                            &m_SDL_logo_texture, m_logo_size.x, m_logo_size.y, m_SDL_renderer);
 }
-
 App::~App()
 {
     //Imgui cleanup
@@ -23,7 +22,6 @@ App::~App()
     SDL_DestroyWindow(m_SDL_window);
     SDL_Quit();
 }
-
 bool App::setup_backend(BACKEND _backend)
 {
 
@@ -36,11 +34,7 @@ bool App::setup_backend(BACKEND _backend)
     // Enable native IME.
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");    
     // Create window with SDL_Renderer graphics context
-    m_SDL_window_flags = (SDL_WindowFlags)( SDL_WINDOW_OPENGL
-                                            | SDL_WINDOW_ALWAYS_ON_TOP
-                                            //| SDL_WINDOW_FULLSCREEN_DESKTOP
-                                            | SDL_WINDOW_BORDERLESS
-                                            );
+    m_SDL_window_flags = (SDL_WindowFlags)( SDL_WINDOW_OPENGL | SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_BORDERLESS );
     m_SDL_window = SDL_CreateWindow(m_title.c_str(), m_size.x, m_size.y, m_SDL_window_flags);
     if (m_SDL_window == nullptr)
     {
@@ -95,11 +89,10 @@ void App::begin()
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
     set_app_style();
-
 }
 void App::render()
 {
-    m_fsm[m_current_state].pfHandler(this);   
+    Global::fsm[static_cast<int>(Global::current_state)].pfHandler(this);
     // Rendering
     ImGui::Render();
     ImGuiIO& m_io = ImGui::GetIO(); (void)m_io;
@@ -152,7 +145,7 @@ void screen1_render(App* app)
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(app->m_clear_color));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(app->m_clear_color));
         if(ImGui::ImageButton((void*)app->m_SDL_logo_texture, ImgSize)){
-            app->m_current_state = FSM::SCREEN2;
+            Global::current_state = FSM::eSystemState::UI_SCREEN2;
         }
         ImGui::PopStyleColor(3);
     }ImGui::End();
@@ -164,20 +157,18 @@ void screen2_render(App* app)
     ImVec2 size = ImVec2(1280, 720);
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
 
-
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
-
-    static User _inputUser;
 
     if(ImGui::Begin(name.c_str(), NULL, flags)){
 
         ImGui::Text("Username:");
-        ImGui::InputTextWithHint("##username","Username", &_inputUser.name, ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank);
-
+        static std::string _user_name;
+        ImGui::InputTextWithHint("##username","Username", &_user_name, ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank);
         ImGui::Text("Password:");
         static bool _isViewPass = false;
-        ImGui::InputTextWithHint("##password:","Password", &_inputUser.password, _isViewPass ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_Password);
+        static std::string _password;
+        ImGui::InputTextWithHint("##password:","Password", &_password, _isViewPass ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_Password);
         ImGui::SameLine();
         if(ImGui::Button(_isViewPass ? "Hide" : "View")){
             _isViewPass = !_isViewPass;
@@ -211,9 +202,7 @@ void screen2_render(App* app)
         if(ImGui::Button("Delete")){
 
         }
-
     }ImGui::End();
-
 
 }
 void screen3_render(App* app)
@@ -224,8 +213,6 @@ void screen3_render(App* app)
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
-    if(ImGui::Begin(name.c_str(), NULL, flags)){        
-    }ImGui::End();
 }
 void screen4_render(App* app)
 {
@@ -278,7 +265,7 @@ void App::draw_grid(float scale, const ImVec4& color, bool filled)
 }
 void App::mouse_handler(float threshold){
     
-    uint8_t index = m_current_state;
+    uint8_t index = static_cast<int>(Global::current_state);
     ImGuiIO& io = ImGui::GetIO();
     if ( ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
         PRINT("Clicked");
@@ -287,15 +274,15 @@ void App::mouse_handler(float threshold){
     if( m_is_drag_state && io.MouseDelta.x > 0 && ImGui::IsMouseDragging(ImGuiMouseButton_Left, threshold)){
         PRINT("Swipe Left");
         index == 0 ? index = 4 : index--;
-        m_current_state = static_cast<FSM::systemState_t>(index);
-        PRINT("Screen: " + std::to_string( m_current_state + 1 ));
+        Global::current_state = static_cast<FSM::eSystemState>(index);
+        PRINT("Screen: " + std::to_string( static_cast<int>(Global::current_state) + 1 ));
         m_is_drag_state=false;
     }
     if( m_is_drag_state && io.MouseDelta.x < 0 && ImGui::IsMouseDragging(ImGuiMouseButton_Left, threshold)){
         PRINT("Swipe Right");
         index == 4 ? index = 0 : index++;
-        m_current_state = static_cast<FSM::systemState_t>(index);
-        PRINT("Screen: " + std::to_string( m_current_state + 1 ));
+        Global::current_state = static_cast<FSM::eSystemState>(index);
+        PRINT("Screen: " + std::to_string( static_cast<int>(Global::current_state) + 1 ));
         m_is_drag_state=false;
     }
     if ( ImGui::IsMouseReleased(ImGuiMouseButton_Left)){
@@ -339,27 +326,27 @@ void App::debug_screen(App* app){
         //Screen selector
         ImGui::SeparatorText("Screen selector");
         if (ImGui::Button("Screen1")){
-            app->m_current_state = FSM::SCREEN1;
+            Global::current_state = FSM::eSystemState::UI_SCREEN1;
             PRINT("FSM::SCREEN1");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen2")){
-            app->m_current_state = FSM::SCREEN2;
+            Global::current_state = FSM::eSystemState::UI_SCREEN2;
             PRINT("FSM::SCREEN2");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen3")){
-            app->m_current_state = FSM::SCREEN3;
+            Global::current_state = FSM::eSystemState::UI_SCREEN3;
             PRINT("FSM::SCREEN3");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen4")){
-            app->m_current_state = FSM::SCREEN4;
+            Global::current_state = FSM::eSystemState::UI_SCREEN4;
             PRINT("FSM::SCREEN4");
         }
         ImGui::SameLine();
         if (ImGui::Button("Screen5")){
-            app->m_current_state = FSM::SCREEN5;
+            Global::current_state = FSM::eSystemState::UI_SCREEN5;
             PRINT("FSM::SCREEN5");
         }
         // Mouse info

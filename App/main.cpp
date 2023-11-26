@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "user.hpp"
 #include "app.hpp"
 #include "database.hpp"
 #include "filelogger.hpp"
@@ -19,6 +19,7 @@ int main(int, char **)
     { // IMGUI code
         app.begin();
         {
+
         }
         app.render();
     } while (!app.get_is_app_done());
