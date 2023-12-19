@@ -3,41 +3,37 @@
 #include "string"
 
 #include "imgui.h"
-
+namespace Application {
+struct UI_Spec{
+    std::string title;
+    ImVec2 size;
+    ImVec2 position;
+    ImGuiWindowFlags flags;
+};
 class UI_Screen
 {
 private:
-    std::string m_title;
-    ImVec2 m_size;
-    ImVec2 m_position;
-    ImGuiWindowFlags m_flags;
+    UI_Spec m_screen_spec;
 public:
-    UI_Screen(const std::string _title, ImVec2 _size, ImVec2 _position, ImGuiWindowFlags _flags )
-        :m_title(_title),m_size(_size),m_position(_position),m_flags(_flags)
-    {}
-    ~UI_Screen(){}
+    UI_Screen(UI_Spec _spec ) : m_screen_spec(_spec){};
+    ~UI_Screen(){};
 
     virtual void render() = 0;
 
-    /*Getters and setters*/
-    std::string title() const;
-    void set_title(const std::string &newTitle);
-    ImVec2 size() const;
-    void set_size(const ImVec2 &newSize);
-    ImVec2 position() const;
-    void set_position(const ImVec2 &newPosition);
-    ImGuiWindowFlags flags() const;
-    void set_fags(ImGuiWindowFlags newFlags);
+    /** Getters and setters **/
+    inline std::string get_title() const {  return m_screen_spec.title; }
+    inline void  set_title(const std::string &newTitle) { m_screen_spec.title = newTitle; }
+
+    inline ImVec2  get_position() const { return m_screen_spec.position; }
+    inline void set_position(const ImVec2 &newPosition) {  m_screen_spec.position = newPosition; }
+
+    inline ImGuiWindowFlags get_flags() const { return m_screen_spec.flags; }
+    inline void set_fags(ImGuiWindowFlags newFlags) {  m_screen_spec.flags = newFlags; }
+
+    inline ImVec2 get_size() const {  return m_screen_spec.size; }
+    inline void set_size(const ImVec2 &newSize) {  m_screen_spec.size = newSize; }
+
+    inline UI_Spec get_screen_spec() const { return m_screen_spec; }
+    inline void set_screen_spec(const UI_Spec &newScreen_spec) { m_screen_spec = newScreen_spec; }
 };
-/*Getters and setters*/
-inline std::string UI_Screen::title() const {  return m_title; }
-inline void UI_Screen::set_title(const std::string &newTitle) { m_title = newTitle; }
-
-inline ImVec2 UI_Screen::position() const { return m_position; }
-inline void UI_Screen::set_position(const ImVec2 &newPosition) {  m_position = newPosition; }
-
-inline ImGuiWindowFlags UI_Screen::flags() const { return m_flags; }
-inline void UI_Screen::set_fags(ImGuiWindowFlags newFlags) {  m_flags = newFlags; }
-
-inline ImVec2 UI_Screen::size() const {  return m_size; }
-inline void UI_Screen::set_size(const ImVec2 &newSize) {  m_size = newSize; }
+}// namespace Application

@@ -1,6 +1,6 @@
 #include "app.hpp"
 
-App::App(ImVec2 _size, std::string _title, App::BACKEND _backend) :
+Application::UI::UI(ImVec2 _size, std::string _title, Application::UI::BACKEND _backend) :
     m_size(_size),
     m_title(_title),
     m_backend(_backend)
@@ -9,7 +9,7 @@ App::App(ImVec2 _size, std::string _title, App::BACKEND _backend) :
     load_texture_from_file("./resources/logo.png",
                            &m_SDL_logo_texture, m_logo_size.x, m_logo_size.y, m_SDL_renderer);
 }
-App::~App()
+Application::UI::~UI()
 {
     //Imgui cleanup
     ImGui_ImplSDLRenderer3_Shutdown();
@@ -22,7 +22,7 @@ App::~App()
     SDL_DestroyWindow(m_SDL_window);
     SDL_Quit();
 }
-bool App::setup_backend(BACKEND _backend)
+bool Application::UI::setup_backend(Application::UI::BACKEND _backend)
 {// Setup SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -62,7 +62,7 @@ bool App::setup_backend(BACKEND _backend)
 
     return EXIT_SUCCESS;
 }
-void App::event_handler()
+void Application::UI::event_handler()
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -75,7 +75,7 @@ void App::event_handler()
     }
     mouse_handler(100.0);
 }
-void App::begin()
+void Application::UI::begin()
 {
     event_handler();
     // Start the Dear ImGui frame
@@ -84,9 +84,9 @@ void App::begin()
     ImGui::NewFrame();
     set_app_style();
 }
-void App::render()
+void Application::UI::render()
 {
-    Global::fsm[static_cast<int>(Global::current_state)].pfHandler(this);
+
     // Rendering
     ImGui::Render();
     ImGuiIO& m_io = ImGui::GetIO(); (void)m_io;
@@ -101,7 +101,7 @@ void App::render()
     ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData());
     SDL_RenderPresent(m_SDL_renderer);
 }
-bool App::load_texture_from_file(const char *_filename, SDL_Texture **_texture_ptr, float &_width, float &_height, SDL_Renderer *_renderer)
+bool Application::UI::load_texture_from_file(const char *_filename, SDL_Texture **_texture_ptr, float &_width, float &_height, SDL_Renderer *_renderer)
 {
     int _flags = IMG_INIT_PNG | IMG_INIT_JPG ;
     int _initStatus = IMG_Init(_flags);
@@ -122,7 +122,7 @@ bool App::load_texture_from_file(const char *_filename, SDL_Texture **_texture_p
     SDL_DestroySurface(_surface);
     return EXIT_SUCCESS;
 }
-void screen1_render(App* app)
+void screen1_render(Application::UI& app)
 {
     const char* name = "SCREEN 1";
     ImVec2 position = ImVec2(0,0);
@@ -135,16 +135,16 @@ void screen1_render(App* app)
         //ImGui::Image((void*)app->m_SDL_logoTexture, ImgSize);
         ImVec2 ImgSize = ImVec2(1089, 720);
         ImGui::SetCursorPos(ImVec2((size.x-ImgSize.x)/2,0) );
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(app->m_clear_color));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(app->m_clear_color));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(app->m_clear_color));
-        if(ImGui::ImageButton((void*)app->m_SDL_logo_texture, ImgSize)){
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(app.get_clear_color() ));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(app.get_clear_color() ));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(app.get_clear_color()));
+        if(ImGui::ImageButton((void*)app.get_SDL_logo_texture(), ImgSize)){
             Global::current_state = FSM::eSystemState::UI_SCREEN2;
         }
         ImGui::PopStyleColor(3);
     }ImGui::End();
 }
-void screen2_render(App* app)
+void screen2_render(Application::UI& app)
 {
     const std::string name = "LOGIN";
     ImVec2 position = ImVec2(0,0);
@@ -169,37 +169,34 @@ void screen2_render(App* app)
         }
         static bool _isLogged = false;
         if(ImGui::Button(_isLogged ? "Logout":"Login")){
+            PRINT("Login|Logout button pressed");
             _isLogged = ! _isLogged;
         }
         ImGui::SameLine();
-        if(ImGui::Button("Logout")){
-
-        }
-        ImGui::SameLine();
         if(ImGui::Button("Users")){
-
+            PRINT("Users button pressed");
         }
         //CRUD - Create, Read, Update, Delete.
         ImGui::SeparatorText("CRUD");
         if(ImGui::Button("Create")){
-
+            PRINT("Create button pressed");
         }
         ImGui::SameLine();
         if(ImGui::Button("Read")){
-
+            PRINT("Read button pressed");
         }
         ImGui::SameLine();
         if(ImGui::Button("Update")){
-
+            PRINT("Update button pressed");
         }
         ImGui::SameLine();
         if(ImGui::Button("Delete")){
-
+            PRINT("Delete button pressed");
         }
     }ImGui::End();
 
 }
-void screen3_render(App* app)
+void screen3_render(Application::UI& app)
 {
     const std::string name = "HOME";
     ImVec2 position = ImVec2(0,0);
@@ -208,7 +205,7 @@ void screen3_render(App* app)
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 }
-void screen4_render(App* app)
+void screen4_render(Application::UI& app)
 {
     const std::string name = "RECIPIES";
     ImVec2 position = ImVec2(0,0);
@@ -221,7 +218,7 @@ void screen4_render(App* app)
 
     }ImGui::End();
 }
-void screen5_render(App* app)
+void screen5_render(Application::UI& app)
 {
     const std::string name = "SETUP";
     ImVec2 position = ImVec2(0,0);
@@ -234,7 +231,8 @@ void screen5_render(App* app)
 
     }ImGui::End();
 }
-void App::draw_grid(float scale, const ImVec4& color, bool filled)
+
+void Application::UI::draw_grid(float scale, const ImVec4& color, bool filled)
 {
     const ImU32 color_int = ImColor(color);
 
@@ -257,7 +255,7 @@ void App::draw_grid(float scale, const ImVec4& color, bool filled)
         }
     }
 }
-void App::mouse_handler(float threshold){
+void Application::UI::mouse_handler(float threshold){
     
     uint8_t index = static_cast<int>(Global::current_state);
     ImGuiIO& io = ImGui::GetIO();
@@ -284,8 +282,7 @@ void App::mouse_handler(float threshold){
         m_is_drag_state=true;
     }
 }
-
-void App::set_app_style()
+void Application::UI::set_app_style()
 {
     ImGuiStyle& style = ImGui::GetStyle();
     //ImGui::SeparatorText("Rounding");
@@ -294,9 +291,7 @@ void App::set_app_style()
     style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
     style.SeparatorTextAlign = ImVec2(0.5f, 0.5f);
 }
-
-
-void App::debug_screen(App* app){
+void Application::UI::debug_screen(Application::UI& app){
 
     const char* name = "Debug";
     //ImVec2 position = ImVec2(0,0);
@@ -374,7 +369,7 @@ void App::debug_screen(App* app){
         m_is_drag_state = ImGui::IsMouseReleased(ImGuiMouseButton_Left);
 
         if (ImGui::Button("EXIT!!!"))
-            app->set_app_done(true);
+            app.set_app_done(true);
 
     }ImGui::End();
 }

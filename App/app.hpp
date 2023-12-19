@@ -7,6 +7,7 @@
 
 #include "globals.hpp"
 #include "filelogger.hpp"
+#include "ui_screen.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"
@@ -20,26 +21,28 @@
 #endif
 #include "SDL3_image/SDL_image.h"
 
-class App
+
+namespace Application {
+class UI
 {
 public:
     // TODO: implement others backends
     enum class BACKEND { SDL3 };
 public:
-    App(ImVec2 _size, const std::string _title, BACKEND _backend);
-    ~App();
+    UI(ImVec2 _size, const std::string _title, BACKEND _backend);
+    ~UI();
 private:
     bool m_is_app_done;
     bool m_is_drag_state;
     const std::string m_title;
     ImVec2 m_size;
-    // Setup backend
+    /**  Setup backend **/
     BACKEND m_backend;
-    // SDL2 members variables
+    /** SDL2 members variables **/
     SDL_WindowFlags m_SDL_window_flags;
     SDL_Window* m_SDL_window = nullptr;
     SDL_Renderer* m_SDL_renderer = nullptr;
-public:
+    /** SDL surface (logo) **/
     ImVec2 m_logo_size;
     SDL_Texture* m_SDL_logo_texture = nullptr;
     ImVec4 m_clear_color = ImVec4(0.15f, 0.15f, 0.15f, 0.0f);
@@ -49,12 +52,18 @@ public: // methods
     void event_handler();
     void begin();
     void render();
-public:
     void draw_grid(float scale, const ImVec4 &color, bool filled);
     void mouse_handler(float threshold);
     void set_app_style();
-    void debug_screen(App *app);
-public: // inline methods
+    void debug_screen(UI& app);
+public:/**Getter and Setters **/
     inline bool get_is_app_done() const { return (m_is_app_done); }
     inline void set_app_done(bool appDone) { m_is_app_done = appDone; }
+    inline ImVec2 get_logo_size() const { return m_logo_size; }
+    inline void set_logo_size(const ImVec2 &newLogo_size) { m_logo_size = newLogo_size; }
+    inline SDL_Texture* get_SDL_logo_texture() const { return m_SDL_logo_texture; }
+    inline void set_SDL_logo_texture(SDL_Texture *newSDL_logo_texture) { m_SDL_logo_texture = newSDL_logo_texture; }
+    inline ImVec4 get_clear_color() const { return m_clear_color; }
+    inline void set_clear_color(const ImVec4 &newClear_color) { m_clear_color = newClear_color; }
 };
+} // namespace Application
