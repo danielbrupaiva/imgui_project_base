@@ -12,7 +12,7 @@ int main(int, char **)
 
     Application::UI app{ImVec2(1280, 720), "ImGUI APP", Application::UI::BACKEND::SDL3};
     // Start backend
-    Core::Database db{"localhost", "5432", "imgui", "1234", "project"};
+    Core::Database& db = Core::Database::Instance("localhost", "5432", "imgui", "1234", "project");
 
     PRINT("Do-While ");
     do

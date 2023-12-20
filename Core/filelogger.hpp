@@ -67,7 +67,7 @@ public:
     inline std::string GetFileName() const { return m_FileName; };
 
 private:
-    Logger(){};
+    explicit Logger(){};
     ~Logger(){};
     // Custom deleter
     struct FILEDeleter

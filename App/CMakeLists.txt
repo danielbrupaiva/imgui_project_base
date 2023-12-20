@@ -24,12 +24,12 @@ set(SOURCES
     globals.hpp
     FSM.hpp
     app.hpp app.cpp
-    ui_screen.h
+    iscreen.hpp
+    ui_home_screen.h ui_home_screen.cpp
 )
 ###############################################################################################
 add_executable(${PROJECT_NAME}
     ${SOURCES}
-
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC

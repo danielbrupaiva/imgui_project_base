@@ -7,7 +7,7 @@
 
 #include "globals.hpp"
 #include "filelogger.hpp"
-#include "ui_screen.h"
+#include "iscreen.hpp"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"

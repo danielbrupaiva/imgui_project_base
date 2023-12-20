@@ -1,22 +1,20 @@
 #pragma once
 #include "iostream"
 #include "string"
-
+#include "filelogger.hpp"
 #include "imgui.h"
 namespace Application {
-struct UI_Spec{
-    std::string title;
-    ImVec2 size;
-    ImVec2 position;
-    ImGuiWindowFlags flags;
-};
-class UI_Screen
+class IScreen
 {
-private:
-    UI_Spec m_screen_spec;
 public:
-    UI_Screen(UI_Spec _spec ) : m_screen_spec(_spec){};
-    ~UI_Screen(){};
+    struct Spec{
+        std::string title;
+        ImVec2 size;
+        ImVec2 position;
+        ImGuiWindowFlags flags;
+    };
+    explicit IScreen(Spec _spec) : m_screen_spec(_spec){};
+    ~IScreen(){};
 
     virtual void render() = 0;
 
@@ -33,7 +31,10 @@ public:
     inline ImVec2 get_size() const {  return m_screen_spec.size; }
     inline void set_size(const ImVec2 &newSize) {  m_screen_spec.size = newSize; }
 
-    inline UI_Spec get_screen_spec() const { return m_screen_spec; }
-    inline void set_screen_spec(const UI_Spec &newScreen_spec) { m_screen_spec = newScreen_spec; }
+    inline Spec get_screen_spec() const { return m_screen_spec; }
+    inline void set_screen_spec(const Spec &newScreen_spec) { m_screen_spec = newScreen_spec; }
+
+private:
+    Spec m_screen_spec;
 };
 }// namespace Application

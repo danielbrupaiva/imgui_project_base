@@ -20,7 +20,7 @@ install(TARGETS
 ###############################################################################################
 set(SOURCES
     filelogger.hpp
-    database.hpp
+    database.hpp database.cpp
 )
 ###############################################################################################
 add_library(${PROJECT_NAME} STATIC )

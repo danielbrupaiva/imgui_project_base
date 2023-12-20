@@ -11,7 +11,7 @@ private:
     eSecurity_level security_level = eSecurity_level::USER;
     bool is_logged = false;
 public:
-    User(){ std::cout << "User constructor\n"; }
+    explicit User(){ std::cout << "User constructor\n"; }
     ~User(){ std::cout << "User destructor\n"; }
     /*Getters and setters*/
     std::string get_name() const;
