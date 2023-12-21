@@ -14,27 +14,15 @@ public:
     explicit User(){ std::cout << "User constructor\n"; }
     ~User(){ std::cout << "User destructor\n"; }
     /*Getters and setters*/
-    std::string get_name() const;
-    void set_name(const std::string &newName);
+    inline bool get_is_logged() const { return is_logged; }
+    inline void set_is_logged(bool newIs_logged) { is_logged = newIs_logged; }
 
-    std::string get_password() const;
-    void set_password(const std::string &newPassword);
+    inline std::string get_name() const { return name; }
+    inline void set_name(const std::string &_name) { name = _name; }
 
-    eSecurity_level get_security_level() const;
-    void set_security_level(eSecurity_level newSecurity_level);
+    inline std::string get_password() const { return password; }
+    inline void set_password(const std::string &_password) { password = _password; }
 
-    bool get_user_log_state() const;
-    void set_user_log_state(bool newIs_logged);
+    inline User::eSecurity_level get_security_level() const { return security_level; }
+    inline void set_security_level(User::eSecurity_level _security_level) { security_level = _security_level; }
 };
-/*Getters and setters*/
-inline std::string User::get_name() const { return name; }
-inline void User::set_name(const std::string &_name) { name = _name; }
-
-inline std::string User::get_password() const { return password; }
-inline void User::set_password(const std::string &_password) { password = _password; }
-
-inline User::eSecurity_level User::get_security_level() const { return security_level; }
-inline void User::set_security_level(User::eSecurity_level _security_level) { security_level = _security_level; }
-
-inline bool User::get_user_log_state() const { return is_logged; }
-inline void User::set_user_log_state(bool _is_logged) { is_logged = _is_logged; }

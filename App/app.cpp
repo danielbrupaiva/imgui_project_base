@@ -157,42 +157,74 @@ void screen2_render(Application::UI& app)
     if(ImGui::Begin(name.c_str(), NULL, flags)){
 
         ImGui::Text("Username:");
-        static std::string _user_name;
-        ImGui::InputTextWithHint("##username","Username", &_user_name, ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank);
+        static std::string user_name;
+        ImGui::InputTextWithHint("##username","Username", &user_name, ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank);
+
         ImGui::Text("Password:");
-        static bool _isViewPass = false;
-        static std::string _password;
-        ImGui::InputTextWithHint("##password:","Password", &_password, _isViewPass ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_Password);
+        static bool isViewPass = false;
+        static std::string password;
+        ImGui::InputTextWithHint("##password:","Password", &password, isViewPass ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_Password);
+
         ImGui::SameLine();
-        if(ImGui::Button(_isViewPass ? "Hide" : "View")){
-            _isViewPass = !_isViewPass;
+        if(ImGui::Button(isViewPass ? "Hide" : "View")){
+            isViewPass = !isViewPass;
         }
-        static bool _isLogged = false;
-        if(ImGui::Button(_isLogged ? "Logout":"Login")){
+
+        if(ImGui::Button(Global::user.get_is_logged() ? "Logout":"Login")){
+
             PRINT("Login|Logout button pressed");
-            _isLogged = ! _isLogged;
+            if(Global::user.get_is_logged())
+            {
+                Global::user.set_is_logged(false);
+            }
+            else
+            {
+                //check if credential is valid
+                Global::user.set_name(user_name);
+                Global::user.set_password(password);
+
+                Global::user.set_is_logged(true);
+            }
+
         }
         ImGui::SameLine();
         if(ImGui::Button("Users")){
             PRINT("Users button pressed");
         }
+
+
+
+        /*
         //CRUD - Create, Read, Update, Delete.
         ImGui::SeparatorText("CRUD");
         if(ImGui::Button("Create")){
             PRINT("Create button pressed");
+            //INSERT INTO tb_users (username, security_level, "password") VALUES('', 0, '');
+            Core::Database& db = Core::Database::Instance("localhost", "5432", "imgui", "1234", "project");
+            db.commit_query("INSERT INTO tb_users (username, security_level, \"password\") VALUES('"+Global::user.get_name()+"', 0, '"+Global::user.get_password()+"');");
+            PRINT("name: "+Global::user.get_name() + "\tpass: " + Global::user.get_password());
         }
         ImGui::SameLine();
         if(ImGui::Button("Read")){
             PRINT("Read button pressed");
+            //SELECT user_id, username, security_level, "password" FROM tb_users WHERE  username = 'DANIEL';
+            Core::Database& db = Core::Database::Instance("localhost", "5432", "imgui", "1234", "project");
+
         }
         ImGui::SameLine();
         if(ImGui::Button("Update")){
             PRINT("Update button pressed");
+            //UPDATE tb_users SET user_id=nextval('tb_users_user_id_seq'::regclass), security_level=0, "password"='' WHERE username='';
+            Core::Database& db = Core::Database::Instance("localhost", "5432", "imgui", "1234", "project");
+            db.commit_query("UPDATE tb_users SET user_id=nextval('tb_users_user_id_seq'::regclass), security_level=0, \"password\"='"+password+"' WHERE username='"+user_name+"';");
         }
         ImGui::SameLine();
         if(ImGui::Button("Delete")){
             PRINT("Delete button pressed");
-        }
+            //DELETE FROM tb_users WHERE username='';
+            Core::Database& db = Core::Database::Instance("localhost", "5432", "imgui", "1234", "project");
+            db.commit_query("DELETE FROM tb_users WHERE username='"+user_name+"';");
+        }*/
     }ImGui::End();
 
 }
