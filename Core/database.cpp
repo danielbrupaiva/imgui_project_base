@@ -4,15 +4,16 @@ std::mutex Core::Database::s_mutex;
 
 Core::Database &Core::Database::Instance(const std::string _host, const std::string _port, const std::string _username, const std::string _password, const std::string _dbname)
 {
+    PRINT("Database instance created");
     std::lock_guard<std::mutex> lock(s_mutex);
     static Database* s_instance = new Database(_host,_port,_username,_password,_dbname);
     return *s_instance;
 }
 
-std::shared_ptr<pqxx::connection> Core::Database::connect()
+std::unique_ptr<pqxx::connection> Core::Database::connect()
 {
     try {
-        auto _connection = std::make_shared<pqxx::connection>(m_connection_string);
+        auto _connection = std::make_unique<pqxx::connection>(m_connection_string);
         if(_connection->is_open())
         {
             PRINT("Connection with "+static_cast<std::string>( _connection->dbname())+" database was opened");
@@ -30,7 +31,7 @@ std::shared_ptr<pqxx::connection> Core::Database::connect()
     }
 }
 
-std::shared_ptr<pqxx::connection> Core::Database::connect(const std::string _connection_string)
+std::unique_ptr<pqxx::connection> Core::Database::connect(const std::string _connection_string)
 {
     set_connection_string(_connection_string);
     return connect();
@@ -50,9 +51,12 @@ pqxx::result Core::Database::commit_query(std::string_view _sql_query)
     PRINT("Commit SQL query");
     pqxx::result result;
     try {
-        pqxx::work work(*m_connection);
-        result = work.exec(_sql_query);
-        work.commit();
+        if(m_connection->is_open())
+        {
+            pqxx::work work(*m_connection);
+            result = work.exec(_sql_query);
+            work.commit();
+        }
         return result;
 
     } catch (const std::exception& e) {
@@ -74,6 +78,13 @@ void Core::Database::print_query_result(pqxx::result &_result)
 void Core::Database::reset_database()
 {
     commit_query(initial_setup_query);
+}
+
+int Core::Database::table_size(std::string _table)
+{
+    auto result = commit_query("SELECT COUNT(*) AS row_count FROM "+_table+";");
+    pqxx::row row{result[0]};
+    return row[0].as<int>();
 }
 
 Core::Database::Database(const std::string _host, const std::string _port, const std::string _username, const std::string _password, const std::string _dbname)

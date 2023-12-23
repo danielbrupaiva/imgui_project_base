@@ -52,6 +52,7 @@ public: // methods
     void event_handler();
     void begin();
     void render();
+    void pop_window_log(const std::string& _msg, ImGuiWindowFlags_ flags);
     void draw_grid(float scale, const ImVec4 &color, bool filled);
     void mouse_handler(float threshold);
     void set_app_style();

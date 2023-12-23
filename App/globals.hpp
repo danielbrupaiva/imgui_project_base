@@ -1,10 +1,12 @@
 #pragma once
 #include "user.hpp"
 #include "FSM.hpp"
+#include "database.hpp"
 /*GLOBAL VARIABLES*/
 namespace Global {
 
-inline User user;
+inline auto& db = Core::Database::Instance("localhost", "5432", "imgui", "1234", "project");
+inline User system_user;
 //FSM definition
 #define NUM_OF_STATES 5
 inline FSM::eSystemState current_state = FSM::eSystemState::UI_SCREEN1;

@@ -16,7 +16,7 @@ private:
     std::string m_password;
     std::string m_dbname;
     std::string m_connection_string;
-    std::shared_ptr<pqxx::connection> m_connection;
+    std::unique_ptr<pqxx::connection> m_connection;
 
     std::string initial_setup_query =
         "CREATE EXTENSION IF NOT EXISTS pgcrypto;\
@@ -43,12 +43,13 @@ public:
                               const std::string _username,
                               const std::string _password,
                               const std::string _dbname);
-    std::shared_ptr<pqxx::connection> connect();
-    std::shared_ptr<pqxx::connection> connect(const std::string _connection_string);
+    std::unique_ptr<pqxx::connection> connect();
+    std::unique_ptr<pqxx::connection> connect(const std::string _connection_string);
     void disconnect();
     pqxx::result commit_query(std::string_view _sql_query);
     void print_query_result(pqxx::result& _result);
     void reset_database();
+    int table_size(std::string _table);
 
 protected:
     explicit Database(const std::string _host,
