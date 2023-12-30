@@ -80,19 +80,13 @@ void Core::Database::reset_database()
     commit_query(initial_setup_query);
 }
 
-int Core::Database::table_size(std::string _table)
-{
-    auto result = commit_query("SELECT COUNT(*) AS row_count FROM "+_table+";");
-    pqxx::row row{result[0]};
-    return row[0].as<int>();
-}
-
 Core::Database::Database(const std::string _host, const std::string _port, const std::string _username, const std::string _password, const std::string _dbname)
     : m_host{_host}, m_port{_port}, m_username{_username}, m_password{_password}, m_dbname{_dbname}
 {
     PRINT("Database constructor");
     set_connection_string("host="+_host+" port="+_port+" user="+_username+" password="+_password+" dbname="+_dbname);
     m_connection = connect();
+    prepare_statements(*m_connection);
 }
 
 Core::Database::~Database()

@@ -20,12 +20,9 @@ install(TARGETS
 ###############################################################################################
 set(SOURCES
     main.cpp
-    user.hpp
     globals.hpp
     FSM.hpp
     app.hpp app.cpp
-    iscreen.hpp
-    ui_home_screen.h ui_home_screen.cpp
 )
 ###############################################################################################
 add_executable(${PROJECT_NAME}

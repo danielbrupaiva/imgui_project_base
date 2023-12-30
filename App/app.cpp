@@ -146,19 +146,7 @@ void screen1_render(Application::UI& app)
         ImGui::PopStyleColor(3);
     }ImGui::End();
 }
-void popup_log_window(const std::string &_msg, bool* p_open, ImGuiWindowFlags_ flags)
-{
-    /** Pop-up message**/
-    ImGui::OpenPopup("Users");
-    PRINT("Message: "+_msg);
-    if (ImGui::BeginPopupModal("Message", p_open, flags))
-    {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), _msg.c_str() );
-        if (ImGui::Button("Close"))
-            ImGui::CloseCurrentPopup();
-        ImGui::EndPopup();
-    }
-}
+
 void screen2_render(Application::UI& app)
 {
     const std::string name = "LOGIN";
@@ -169,58 +157,53 @@ void screen2_render(Application::UI& app)
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
-    static std::string _msg = "";
+    static std::string msg = "";
     if(ImGui::Begin(name.c_str(), NULL, flags)){
         /** Username InputText field **/
         ImGui::Text("Username:");
-        static std::string _user_name;
-        ImGui::InputTextWithHint("##username", "Enter user's name", &_user_name, ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank);
+        static std::string username;
+        ImGui::InputTextWithHint("##username", "Enter user's name", &username, ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank);
 
         /** Password InputText field **/
         ImGui::Text("Password:");
-        static bool _isViewPass = false;
-        static std::string _password;
-        ImGui::InputTextWithHint("##password:", "Enter user's password", &_password, _isViewPass ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_Password);
+        static bool isViewPass = false;
+        static std::string password;
+        ImGui::InputTextWithHint("##password:", "Enter user's password", &password, isViewPass ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_Password);
+
         ImGui::SameLine();
-        if(ImGui::Button(_isViewPass ? "Hide" : "View")){
-            _isViewPass = !_isViewPass;
+        if(ImGui::Button(isViewPass ? "Hide" : "View")){
+            isViewPass = !isViewPass;
         }
 
         /** Login | Logout button **/
         if( ImGui::Button(Global::system_user.get_is_logged() ? "Logout" : "Login") ){
 
             PRINT("Login|Logout button pressed");
-            if(_user_name.empty())
+            if(username.empty())
             {
-                _msg = "Fail: No user name information!";
-                PRINT(_msg);
+                msg = "Fail: No user name information!";
+                PRINT(msg);
             }
             else if(Global::system_user.get_is_logged())
             {
                 Global::system_user.reset();
-                _user_name.clear();
-                _password.clear();
-                _msg = "User logout";
-                PRINT(_msg);
+                msg = "User logout";
+                PRINT(msg);
             }
 
             else
             {
-                //TODO: Add encrypted hash code in password field
-                pqxx::result result = Global::db.commit_query("SELECT * FROM tb_users WHERE username = '" + _user_name + "' AND password = '" + _password + "';");
-                if(!result.empty())
+                if(Global::db.check_password(username, password, Global::system_user))
                 {
-                    Global::system_user.set_user(_user_name, _password, true, User::eSecurity_level::USER);
-                    _msg = _user_name + " authorized!";
-                    PRINT(_msg);
+                    msg = Global::system_user.get_name() + " authorized!";
+                    PRINT(msg);
                 }else
                 {
-                    _msg = _user_name + " NOT authorized!";
-                    PRINT(_msg);
-                    Global::system_user.reset();
-                    _password.clear();
+                    msg = Global::system_user.get_name() + " NOT authorized!";
+                    PRINT(msg);
                 }
             }
+            password.clear();
         }
 
         /** Pop-up windown for user selection **/
@@ -231,28 +214,32 @@ void screen2_render(Application::UI& app)
         ImGui::SameLine();
         if(ImGui::Button("Users")){
             PRINT("Users button pressed");
-            _row_count = Global::db.table_size("tb_users");
-            _result = Global::db.commit_query("SELECT * FROM tb_users;");
+            _row_count = Global::db.tb_users_size();
+            _result = Global::db.read_all_users();
             ImGui::OpenPopup("Users");
         }
 
         ImGui::SameLine();
-        ImGui::Text( _msg.c_str() );
+        ImGui::Text( msg.c_str() );
 
-        static std::string _user;
+        static std::string user;
         if (ImGui::BeginPopupModal("Users", NULL, 0))//ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
         {
             static int selected = -1;
-            static pqxx::row _row;
+            static pqxx::row row;
             for (int index = 0; index < _row_count; index++)
             {
-                _row = _result[index];
-                _user = _row["username"].as<std::string>();
-                if (ImGui::Selectable(_user.c_str(), selected == index))
+                row = _result[index];
+                user = row["username"].as<std::string>();
+                if (ImGui::Selectable(user.c_str(), selected == index))
                 {
                     selected = index;
-                    _user_name = _user;
-                    Global::system_user.set_is_logged(false);
+                    username = user;
+                    password.clear();
+
+                    Global::system_user.reset();
+                    msg = "Please login";
+                    PRINT(msg);
                 }
             }
 
@@ -263,70 +250,38 @@ void screen2_render(Application::UI& app)
 
         /** CRUD - Create, Read, Update, Delete. **/
         ImGui::SeparatorText("CRUD");
-        if(ImGui::Button("Create")){
-            PRINT("Create button pressed");
-            //INSERT INTO tb_users (username, security_level, "password") VALUES('', 0, '');
-            if(_user_name.empty())
-            {
-                _msg = "Fail: No user name information!";
-                PRINT(_msg);
+        if(Global::system_user.get_is_logged() &&
+            (Global::system_user.get_security_level() == Core::User::eSecurity_level::SUPERVISOR ||
+                                                    Global::system_user.get_security_level() == Core::User::eSecurity_level::ADMIN ) )
+        {
+            if(ImGui::Button("Create")){
+                PRINT("Create button pressed");
+                if(Global::system_user.get_is_logged())
+                {
+                    Global::db.create_user(username, 1, password);
+                }
             }
-            else
+
+            ImGui::SameLine();
+            if(ImGui::Button("Read")){
+                PRINT("Read button pressed");
+            }
+
+            ImGui::SameLine();
+            if(ImGui::Button("Update")){
+                PRINT("Update button pressed");
+            }
+
+            ImGui::SameLine();
+            if(ImGui::Button("Delete"))
             {
-                Global::db.commit_query("INSERT INTO tb_users (username, security_level, \"password\") VALUES('"+_user_name+"', 0, '"+_password+"');");
-                _msg = "User created";
-                PRINT(_msg);
+                PRINT("Delete button pressed");
             }
         }
-        ImGui::SameLine();
-        if(ImGui::Button("Read")){
-            PRINT("Read button pressed");
 
-            if(_user_name.empty())
-            {
-                _msg = "Fail: No user name information!";
-                PRINT(_msg);
-            }else{
-                _msg = "User information readed";
-                PRINT(_msg);
-            }
-
-        }else{
-
-        }
-
-        ImGui::SameLine();
-        if(ImGui::Button("Update")){
-            PRINT("Update button pressed");
-            if(_user_name.empty())
-            {
-                _msg = "Fail: No user name information!";
-                PRINT(_msg);
-            }
-            else
-            {
-                Global::db.commit_query("UPDATE tb_users SET user_id=nextval('tb_users_user_id_seq'::regclass), security_level=0, \"password\"='"+_password+"' WHERE username='"+_user_name+"';");
-                _msg = "User updated";
-                PRINT(_msg);
-            }
-        }
-        ImGui::SameLine();
-        if(ImGui::Button("Delete")){
-            PRINT("Delete button pressed");
-            if(_user_name.empty())
-            {
-                _msg = "Fail: No user name information!";
-                PRINT(_msg);
-            }
-            else
-            {
-                Global::db.commit_query("DELETE FROM tb_users WHERE username='"+_user_name+"';");
-                Global::system_user.reset();
-                _user_name.clear();
-                _password.clear();
-                _msg = "User deleted";
-                PRINT(_msg);
-            }
+        if(ImGui::Button("Reset DB"))
+        {
+            Global::db.reset_database();
         }
 
     }ImGui::End();
@@ -393,7 +348,7 @@ void Application::UI::draw_grid(float scale, const ImVec4& color, bool filled)
     }
 }
 void Application::UI::mouse_handler(float threshold){
-    
+
     uint8_t index = static_cast<int>(Global::current_state);
     ImGuiIO& io = ImGui::GetIO();
     if ( ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
@@ -495,7 +450,7 @@ void Application::UI::debug_screen(Application::UI& app){
         struct funcs { static bool IsLegacyNativeDupe(ImGuiKey key) { return key < 512 && ImGui::GetIO().KeyMap[key] != -1; } }; // Hide Native<>ImGuiKey duplicates when both exists in the array
         ImGuiKey start_key = (ImGuiKey)0;
         ImGui::Text("Keys down:");         for (ImGuiKey key = start_key; key < ImGuiKey_NamedKey_END; key = (ImGuiKey)(key + 1)) { if (funcs::IsLegacyNativeDupe(key) || !ImGui::IsKeyDown(key)) continue; ImGui::SameLine(); ImGui::Text((key < ImGuiKey_NamedKey_BEGIN) ? "\"%s\"" : "\"%s\" %d", ImGui::GetKeyName(key), key); }
-        
+
         if( m_is_drag_state && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 50.0f) && io.MouseDelta.x < 0 ){
             PRINT("Swipe Left");
             m_is_drag_state = false;
